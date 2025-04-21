@@ -1,6 +1,6 @@
 import { test } from "@playwright/test";
 
-// Pro zjednodušení můžeme použít zkratku pwt, která nabídne snipper se základní strukturou testu (nutno mít Playwright Test Snippets  rozšíření od M. Skeltona)
+// Pro zjednodušení můžeme použít zkratku pwt, která nabídne snippet se základní strukturou testu (nutno mít Playwright Test Snippets  rozšíření od M. Skeltona)
 test("První test", async ({ page }) => {
   //Testovací kroky
   await page.goto("https://tredgate.com/pmtool/");
