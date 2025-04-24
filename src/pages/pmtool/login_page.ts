@@ -1,4 +1,4 @@
-import { type Locator, type Page } from "@playwright/test";
+import { test, type Locator, type Page } from "@playwright/test";
 import { DashboardPage } from "./dashboard_page.ts";
 import { LostPasswordPage } from "./lost_password_page.ts";
 
@@ -55,5 +55,15 @@ export class LoginPage {
   async clickPasswordForgotten(): Promise<LostPasswordPage> {
     await this.passwordForgottenAnchor.click();
     return new LostPasswordPage(this.page);
+  }
+
+  async openAndLogin(
+    username: string,
+    password: string
+  ): Promise<DashboardPage> {
+    await test.step("Otevření Pmtool a přihlášení", async () => {
+      await this.openPmtool().then((login) => login.login(username, password));
+    });
+    return new DashboardPage(this.page);
   }
 }

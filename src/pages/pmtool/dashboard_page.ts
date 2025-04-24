@@ -1,4 +1,4 @@
-import { type Locator, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 import { LoginPage } from "./login_page.ts";
 import { ProjectsPage } from "./projects_page.ts";
 
@@ -9,17 +9,21 @@ export class DashboardPage {
   private readonly profileButton: Locator;
   private readonly logoutButton: Locator;
   private readonly projectsButton: Locator;
+  private readonly notificationButton: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.profileButton = page.locator("#user_dropdown");
     this.logoutButton = page.locator("#logout");
     this.projectsButton = page.locator("#Projects a");
+    this.notificationButton = page.locator("#user_notifications_report");
   }
 
   async clickProfile(): Promise<DashboardPage> {
     //! waitForTimeout je tzv. explicitní čekání - TOTO NENÍ DOBŘE, těmto čekání bychom se měli vyvarovat, protože zpomalují testy.
     // await this.page.waitForTimeout(1500);
+    await expect(this.notificationButton).toBeVisible();
+    // Namísto explicitního (natvrdo) čekání, čekáme na zobrazení prvku (implicitní čekání). Implicitní čekání jsou stabilnější a rychlejší, než explicitní.
     await this.profileButton.click();
     return this;
   }
@@ -32,5 +36,13 @@ export class DashboardPage {
   async clickProjects(): Promise<ProjectsPage> {
     await this.projectsButton.click();
     return new ProjectsPage(this.page);
+  }
+
+  async logout(): Promise<LoginPage> {
+    await test.step("Odhlášení z Pmtool", async () => {
+      await this.clickProfile().then((dashboard) => dashboard.clickLogout());
+    });
+
+    return new LoginPage(this.page);
   }
 }
