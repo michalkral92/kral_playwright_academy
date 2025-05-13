@@ -2,7 +2,7 @@ import { test } from "@playwright/test";
 import { LoginPage } from "../../../src/pages/pmtool/login_page.ts";
 
 test.describe("Test Structure - Describe", () => {
-  let loginPage: LoginPage;
+  let loginPage: LoginPage; // Proč je tady let a ne const? Otázka pro mě
 
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
