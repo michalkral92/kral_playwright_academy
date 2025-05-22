@@ -1,4 +1,4 @@
-import { test, type Locator, type Page } from "@playwright/test";
+import { test, expect, type Locator, type Page } from "@playwright/test";
 import { DashboardPage } from "./dashboard_page.ts";
 import { LostPasswordPage } from "./lost_password_page.ts";
 
@@ -10,6 +10,8 @@ export class LoginPage {
   private readonly passwordInput: Locator;
   private readonly loginButton: Locator;
   private readonly passwordForgottenAnchor: Locator;
+  private readonly pageHeader: Locator;
+  private readonly loginForm: Locator;
 
   // 2. Constructor v kterém nastavíme jednotlivé lokátory
   constructor(page: Page) {
@@ -18,7 +20,10 @@ export class LoginPage {
     this.passwordInput = page.locator("#password");
     this.loginButton = page.locator(".btn");
     this.passwordForgottenAnchor = page.locator("#forget_password");
+    this.pageHeader = page.locator("h3.form-title");
+    this.loginForm = page.locator(".content-login");
   }
+
   // 3. Ovládací metody
   // Při vytváření metod doporučím přístup začít s atomickými (malými) metodami s jedním krokem a pak vytvářet sdružující metody
   // Například: typeUsername - jeden krok, login - sdružení více kroků
@@ -57,6 +62,12 @@ export class LoginPage {
     return new LostPasswordPage(this.page);
   }
 
+  // ? Alternativní názvy metody: assertPageHeaderText, pageHeaderShouldHaveText
+  async pageHeaderHasText(headerText: string): Promise<LoginPage> {
+    await expect(this.pageHeader).toHaveText(headerText);
+    return this;
+  }
+
   async openAndLogin(
     username: string,
     password: string
@@ -65,5 +76,10 @@ export class LoginPage {
       await this.openPmtool().then((login) => login.login(username, password));
     });
     return new DashboardPage(this.page);
+  }
+
+  async loginFormVisualCheck(): Promise<LoginPage> {
+    await expect(this.loginForm).toHaveScreenshot("login_form.png");
+    return this;
   }
 }
